@@ -101,8 +101,6 @@ export function useTodos(): UseTodosReturn {
   const handleUpdateTodo = async (id: number, todo: Omit<Todo, "id">) => {
     try {
       setIsLoading(true);
-      console.log("Updating todo:", { id, todo });
-
       // Get the current todo to ensure we have the latest state
       const currentTodo = todos.find((t) => t.id === id);
       if (!currentTodo) {
@@ -114,16 +112,12 @@ export function useTodos(): UseTodosReturn {
         ...todo,
         completed: currentTodo.completed, // Use the current completion status
       };
-
-      console.log("Sending update with data:", updateData);
       const updatedTodo = await updateTodo(id, updateData);
-      console.log("Received updated todo:", updatedTodo);
 
       setTodos((prev) => {
         const newTodos = prev.map((t) =>
           t.id === id ? { ...t, ...updatedTodo } : t
         );
-        console.log("Updated todos state:", newTodos);
         return newTodos;
       });
     } catch (err) {

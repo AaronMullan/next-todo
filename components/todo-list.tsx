@@ -24,7 +24,6 @@ export function TodoList() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted"); // Debug log
     await handleAddTodo();
     // Focus the title input after submission
     titleInputRef.current?.focus();

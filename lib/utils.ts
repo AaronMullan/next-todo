@@ -34,14 +34,11 @@ export async function fetchTodos(): Promise<Todo[]> {
 
   try {
     const url = `${API_ENDPOINT}/todos/`;
-    console.log("Fetching from:", url);
     const response = await fetch(url, {
       method: "GET",
       headers: defaultHeaders,
       mode: "cors",
     });
-
-    console.log("Response status:", response.status);
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Error response:", errorText);
@@ -51,7 +48,6 @@ export async function fetchTodos(): Promise<Todo[]> {
     }
 
     const data = await response.json();
-    console.log("Fetched data:", data);
     return data;
   } catch (error) {
     console.error("Error fetching todos:", error);
@@ -68,7 +64,6 @@ export async function createTodo(todo: TodoCreate): Promise<Todo> {
 
   try {
     const url = `${API_ENDPOINT}/todos/`;
-    console.log("Adding todo to:", url);
     const response = await fetch(url, {
       method: "POST",
       headers: defaultHeaders,
@@ -76,7 +71,6 @@ export async function createTodo(todo: TodoCreate): Promise<Todo> {
       body: JSON.stringify(todo),
     });
 
-    console.log("Response status:", response.status);
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Error response:", errorText);
@@ -86,7 +80,6 @@ export async function createTodo(todo: TodoCreate): Promise<Todo> {
     }
 
     const data = await response.json();
-    console.log("Added todo:", data);
     return data;
   } catch (error) {
     console.error("Error adding todo:", error);
@@ -114,7 +107,6 @@ export async function updateTodo(
       body: JSON.stringify(todo),
     });
 
-    console.log("Response status:", response.status);
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Error response:", errorText);
@@ -131,7 +123,6 @@ export async function updateTodo(
     }
 
     const data = await response.json();
-    console.log("Updated todo:", data);
     return data;
   } catch (error) {
     console.error("Error updating todo:", error);
@@ -148,14 +139,12 @@ export async function deleteTodo(id: number): Promise<void> {
 
   try {
     const url = `${API_ENDPOINT}/todos/${id}`;
-    console.log("Deleting todo at:", url);
     const response = await fetch(url, {
       method: "DELETE",
       headers: defaultHeaders,
       mode: "cors",
     });
 
-    console.log("Response status:", response.status);
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Error response:", errorText);
@@ -169,8 +158,6 @@ export async function deleteTodo(id: number): Promise<void> {
     }
 
     const data = await response.json();
-    console.log("Delete response:", data);
-
     if (data.message && data.message !== "Todo deleted successfully") {
       throw new Error("Unexpected response from server");
     }
