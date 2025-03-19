@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
-import { fetchTodos, createTodo, updateTodo, deleteTodo } from "@/lib/utils";
-import type { Todo, TodoCreate } from "@/lib/utils";
+import {
+  fetchTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+  type Todo,
+  type TodoCreate,
+} from "@/lib/utils";
 
 interface UseTodosReturn {
   todos: Todo[];
@@ -8,7 +14,6 @@ interface UseTodosReturn {
   isLoading: boolean;
   newTodo: { title: string; description: string };
   setNewTodo: (todo: { title: string; description: string }) => void;
-  loadTodos: () => Promise<void>;
   handleAddTodo: () => Promise<void>;
   handleToggleTodo: (id: number, completed: boolean) => Promise<void>;
   handleDeleteTodo: (id: number) => Promise<void>;
@@ -21,38 +26,37 @@ export function useTodos(): UseTodosReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [newTodo, setNewTodo] = useState({ title: "", description: "" });
 
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
   const loadTodos = async () => {
     try {
       setIsLoading(true);
       const data = await fetchTodos();
       setTodos(data);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Failed to fetch todos"
-      );
+    } catch (err) {
+      setError("Failed to fetch todos");
+      console.error("Error fetching todos:", err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadTodos();
-  }, []);
-
   const handleAddTodo = async () => {
     if (!newTodo.title.trim()) return;
-
     try {
       setIsLoading(true);
-      const todo = await createTodo({
+      const todoData: TodoCreate = {
         ...newTodo,
         completed: false,
-      });
+      };
+      const todo = await createTodo(todoData);
       setTodos((prev) => [...prev, todo]);
       setNewTodo({ title: "", description: "" });
-    } catch (error) {
-      console.error("Error in handleAddTodo:", error); // Debug log
-      setError(error instanceof Error ? error.message : "Failed to add todo");
+    } catch (err) {
+      setError("Failed to add todo");
+      console.error("Error adding todo:", err);
     } finally {
       setIsLoading(false);
     }
@@ -85,11 +89,10 @@ export function useTodos(): UseTodosReturn {
     try {
       setIsLoading(true);
       await deleteTodo(id);
-      setTodos(todos.filter((todo) => todo.id !== id));
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "Failed to delete todo"
-      );
+      setTodos((prev) => prev.filter((t) => t.id !== id));
+    } catch (err) {
+      setError("Failed to delete todo");
+      console.error("Error deleting todo:", err);
     } finally {
       setIsLoading(false);
     }
@@ -137,7 +140,6 @@ export function useTodos(): UseTodosReturn {
     isLoading,
     newTodo,
     setNewTodo,
-    loadTodos,
     handleAddTodo,
     handleToggleTodo,
     handleDeleteTodo,
